@@ -8,11 +8,10 @@ from feature_extraction import FeatureExtractor
 # Configuration de la page
 st.set_page_config(
     page_title="Classification d'images",
-    page_icon="🖼️",
     layout="wide"
 )
 
-# Style CSS personnalisé (similaire à vos captures d'écran)
+# Style CSS personnalisé
 st.markdown("""
     <style>
     .main {
@@ -44,7 +43,7 @@ st.markdown("""
 # Titre principal
 st.markdown("""
     <div style='text-align: center; padding: 20px;'>
-        <h1>🖼️ Classification d'images - Fruits vs Textures</h1>
+        <h1>Classification d'images</h1>
         <p style='color: #666;'>Téléchargez une image pour la classifier automatiquement</p>
     </div>
 """, unsafe_allow_html=True)
@@ -52,12 +51,12 @@ st.markdown("""
 # Charger le modèle
 @st.cache_resource
 def load_model():
-    """Charge le modèle entraîné"""
+    """Charger le modèle entraîné"""
     try:
         model_data = joblib.load('models/classifier_model.pkl')
         return model_data
     except FileNotFoundError:
-        st.error("❌ Modèle non trouvé! Veuillez d'abord entraîner le modèle avec train_model.py")
+        st.error("Modèle non trouvé! Veuillez d'abord entraîner le modèle avec train_model.py")
         st.stop()
 
 model_data = load_model()
@@ -74,7 +73,7 @@ col1, col2 = st.columns([1, 1])
 with col1:
     st.markdown("""
         <div class='upload-box'>
-            <h3>📤 Télécharger une image</h3>
+            <h3>Télécharger une image</h3>
             <p style='color: #666;'>Formats acceptés : JPG, JPEG, PNG</p>
         </div>
     """, unsafe_allow_html=True)
@@ -90,14 +89,11 @@ with col1:
         image = Image.open(uploaded_file)
         st.image(image, caption="Image téléchargée", use_container_width=True)
         
-        # Bouton pour charger une nouvelle image
-        if st.button("📤 Télécharger une nouvelle image"):
-            st.rerun()
 
 with col2:
     if uploaded_file is not None:
         # Préparer l'image pour la prédiction
-        with st.spinner("🔄 Analyse en cours..."):
+        with st.spinner("Analyse en cours..."):
             # Convertir PIL Image en numpy array
             img_array = np.array(image.convert('RGB'))
             
@@ -125,7 +121,7 @@ with col2:
         st.progress(confidence / 100)
         
         # Graphique des probabilités
-        st.markdown("### 📊 Probabilités par catégorie")
+        st.markdown("### Probabilités par catégorie")
         st.markdown("Distribution des scores de classification")
         
         fig, ax = plt.subplots(figsize=(10, 5))
@@ -141,28 +137,28 @@ with col2:
         for bar in bars:
             height = bar.get_height()
             ax.text(bar.get_x() + bar.get_width()/2., height,
-                   f'{height:.1f}%',
-                   ha='center', va='bottom', fontsize=10)
+                f'{height:.1f}%',
+                ha='center', va='bottom', fontsize=10)
         
         plt.tight_layout()
         st.pyplot(fig)
         
         # Informations supplémentaires
-        with st.expander("ℹ️ Détails de la classification"):
+        with st.expander("ℹDétails de la classification"):
             st.markdown(f"""
             - **Classifieur utilisé:** {classifier_name}
             - **Nombre de catégories:** {len(classes)}
             - **Catégories disponibles:** {', '.join(classes)}
             """)
             
-            st.markdown("### 📈 Scores détaillés:")
+            st.markdown("### Scores détaillés:")
             for i, class_name in enumerate(classes):
                 st.write(f"**{class_name}:** {probabilities[i]*100:.2f}%")
     else:
         # Instructions quand aucune image n'est uploadée
         st.markdown("""
             <div style='text-align: center; padding: 60px 20px;'>
-                <h2 style='color: #666;'>👈 Commencez par télécharger une image</h2>
+                <h2 style='color: #666;'>Commencez par télécharger une image</h2>
                 <p>Les résultats de classification apparaîtront ici</p>
             </div>
         """, unsafe_allow_html=True)
@@ -171,7 +167,7 @@ with col2:
 st.markdown("---")
 st.markdown("""
     <div style='text-align: center; color: #666; padding: 20px;'>
-        <p>🎓 Projet de Traitement et Analyse d'Images</p>
+        <p>Projet de Traitement et Analyse d'Images</p>
         <p>Méthodes: HOG, LBP, Histogrammes couleur + {classifier_name}</p>
     </div>
 """.format(classifier_name=classifier_name), unsafe_allow_html=True)
